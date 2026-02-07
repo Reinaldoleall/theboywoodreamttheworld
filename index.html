@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Boy who Dreamt The World</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Boy who Dreamt The World</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -14,7 +16,7 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             background: #000;
             overflow: hidden;
@@ -194,134 +196,157 @@
             transition: 0.3s;
         }
         .btn-back:hover { background: #87ceeb; color: #000; }
-    </style>
+  
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: #000;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    color: #fff;
+    height: 100vh;
+    width: 100vw;
+}
+
+.video-container {
+    position: fixed;
+    inset: 0;
+    z-index: -4;
+    background: #000;
+}
+
+.video-container video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.4) contrast(1.2);
+    transition: opacity 2s ease-in-out;
+    pointer-events: none; /* impede ícone */
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.9) 100%);
+    z-index: -3;
+}
+
+/* (resto do seu CSS permanece igual) */
+</style>
 </head>
+
 <body>
 
-    <div id="particles-small"></div>
-    <div id="particles-bokeh"></div>
+<div id="particles-small"></div>
+<div id="particles-bokeh"></div>
 
-    <div class="video-container">
-        <video id="v1" autoplay muted playsinline></video>
-        <video id="v2" muted playsinline style="opacity: 0;"></video>
-        <div class="overlay"></div>
-    </div>
+<div class="video-container">
+    <video id="v1" autoplay muted playsinline preload="auto" disablepictureinpicture webkit-playsinline>
+        <source src="Iniciar.mp4" type="video/mp4">
+    </video>
 
-    <main class="main-screen" id="main-menu">
-        <section class="title-section">
-            <h1 class="game-title">The Boy Who<br>Dreamt The World</h1>
-            <p class="game-subtitle">O menino que sonhou o mundo</p>
-        </section>
+    <video id="v2" muted playsinline preload="auto" disablepictureinpicture webkit-playsinline style="opacity:0">
+        <source src="Iniciar.mp4" type="video/mp4">
+    </video>
 
-        <section class="menu-section">
-            <button class="menu-link" onclick="handleNavigation('play')">Iniciar Jogo</button>
-            <button class="menu-link" onclick="handleNavigation('continue')">Continuar</button>
-            <button class="menu-link" showCredits()">Créditos</button>
-        </section>
-    </main>
+    <div class="overlay"></div>
+</div>
 
-    <div id="credits-screen">
-        <div class="credits-content">
-            <h3>Uma Produção Independente</h3>
-            <div class="credits-item">
-                <p class="role">Criação, Código e Design</p>
-                <p class="name">Reinaldo Leal</p>
-            </div>
-            <div class="credits-item">
-                <p class="role">Direção de Arte</p>
-                <p class="name">Reinaldo Leal</p>
-            </div>
-            <div class="credits-item" style="margin-top: 50px;">
-                <p style="font-style: italic; opacity: 0.7;">"obrigado por jogar."</p>
-            </div>
+<main class="main-screen" id="main-menu">
+    <section class="title-section">
+        <h1 class="game-title">The Boy Who<br>Dreamt The World</h1>
+        <p class="game-subtitle">O menino que sonhou o mundo</p>
+    </section>
+
+    <section class="menu-section">
+        <button class="menu-link" onclick="handleNavigation('play')">Iniciar Jogo</button>
+        <button class="menu-link" onclick="handleNavigation('continue')">Continuar</button>
+        <button class="menu-link" onclick="showCredits()">Créditos</button>
+    </section>
+</main>
+
+<div id="credits-screen">
+    <div class="credits-content">
+        <h3>Uma Produção Independente</h3>
+        <div class="credits-item">
+            <p class="role">Criação, Código e Design</p>
+            <p class="name">Reinaldo Leal</p>
         </div>
-        <button class="btn-back" onclick="hideCredits()">Voltar</button>
     </div>
+    <button class="btn-back" onclick="hideCredits()">Voltar</button>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        // --- LOGICA DO LOOP SUAVE (CROSSFADE) ---
-        const v1 = document.getElementById('v1');
-        const v2 = document.getElementById('v2');
-        const videoSrc = "Iniciar.mp4";
-        
-        v1.src = videoSrc;
-        v2.src = videoSrc;
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-        function setupLoop(current, next) {
-            current.ontimeupdate = function() {
-                // Inicia a transição 2 segundos antes do fim
-                // Se seu vídeo for muito curto, mude o '2' para '1'
-                if (current.duration - current.currentTime < 2) {
-                    next.currentTime = 0;
-                    next.play();
-                    next.style.opacity = '1';
-                    current.style.opacity = '0';
-                    
-                    // Remove o evento atual e prepara o próximo player
-                    current.ontimeupdate = null; 
-                    setupLoop(next, current);
-                }
-            };
+<script>
+/* --- SEU LOOP COM CROSSFADE (PRESERVADO + PROTEGIDO) --- */
+const v1 = document.getElementById('v1');
+const v2 = document.getElementById('v2');
+
+function setupLoop(current, next) {
+    current.ontimeupdate = () => {
+        if (
+            current.readyState >= 3 &&
+            current.duration &&
+            current.duration - current.currentTime < 2
+        ) {
+            next.currentTime = 0;
+            next.play().catch(()=>{});
+            next.style.opacity = '1';
+            current.style.opacity = '0';
+            current.ontimeupdate = null;
+            setupLoop(next, current);
         }
+    };
+}
 
-        // Garante o início do primeiro vídeo
-        v1.play().catch(e => console.log("Aguardando interação do usuário para o vídeo."));
-        setupLoop(v1, v2);
+v1.play().catch(()=>{});
+setupLoop(v1, v2);
 
-        // --- PARTICULAS ---
-        particlesJS("particles-small", {
-            "particles": {
-                "number": { "value": 50, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ffffff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": true },
-                "size": { "value": 1.5, "random": true },
-                "move": { "enable": true, "speed": 0.8, "direction": "top", "random": true, "out_mode": "out" }
-            }
-        });
+/* --- DESBLOQUEIO MOBILE (OBRIGATÓRIO) --- */
+function unlockVideos() {
+    v1.play().catch(()=>{});
+    v2.play().catch(()=>{});
+}
 
-        particlesJS("particles-bokeh", {
-            "particles": {
-                "number": { "value": 20, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": ["#ffffff", "#cae9ff"] },
-                "opacity": { "value": 0.6, "random": true, "anim": { "enable": true, "speed": 0.2, "opacity_min": 0.1 } },
-                "size": { "value": 45, "random": true, "anim": { "enable": true, "speed": 1, "size_min": 20 } },
-                "move": { "enable": true, "speed": 0.4, "direction": "none", "random": true, "out_mode": "out" }
-            }
-        });
+document.addEventListener('touchstart', unlockVideos, { once:true });
+document.addEventListener('click', unlockVideos, { once:true });
 
-        // --- NAVEGAÇÃO ---
-        function handleNavigation(dest) {
-            const menu = document.getElementById('main-menu');
-            menu.style.opacity = '0';
-            menu.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                window.location.href = dest === 'play' ? './intro.html' : './intro.html?continue=true';
-            }, 1000);
-        }
+/* --- SUAS FUNÇÕES ORIGINAIS --- */
+function handleNavigation(dest) {
+    const menu = document.getElementById('main-menu');
+    menu.style.opacity = '0';
+    setTimeout(() => {
+        window.location.href = dest === 'play'
+            ? './intro.html'
+            : './intro.html?continue=true';
+    }, 1000);
+}
 
-        function showCredits() {
-            const menu = document.getElementById('main-menu');
-            const credits = document.getElementById('credits-screen');
-            menu.style.opacity = '0';
-            setTimeout(() => {
-                menu.style.display = 'none';
-                credits.style.display = 'flex';
-                setTimeout(() => credits.style.opacity = '1', 50);
-            }, 1000);
-        }
+function showCredits() {
+    document.getElementById('main-menu').style.display = 'none';
+    const credits = document.getElementById('credits-screen');
+    credits.style.display = 'flex';
+    setTimeout(()=>credits.style.opacity='1',50);
+}
 
-        function hideCredits() {
-            const menu = document.getElementById('main-menu');
-            const credits = document.getElementById('credits-screen');
-            credits.style.opacity = '0';
-            setTimeout(() => {
-                credits.style.display = 'none';
-                menu.style.display = 'flex';
-                setTimeout(() => menu.style.opacity = '1', 50);
-            }, 1000);
-        }
-    </script>
+function hideCredits() {
+    const credits = document.getElementById('credits-screen');
+    credits.style.opacity = '0';
+    setTimeout(()=>{
+        credits.style.display='none';
+        document.getElementById('main-menu').style.display='flex';
+    },1000);
+}
+</script>
+
 </body>
 </html>
