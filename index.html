@@ -1,352 +1,847 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Boy who Dreamt The World</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a3b5d">
+    <title>Floorshare - Linha Branca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+        body { font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f0f4f8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @page { size: A4; margin: 0; }
+        .category-badge {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 1px solid #d1d5db;
         }
-
-        body {
-            background: #000;
-            overflow: hidden;
-            font-family: 'Quicksand', sans-serif;
-            color: #fff;
-            height: 100vh;
-            width: 100vw;
+        .category-badge.mda { border-left: 3px solid #1a3b5d; }
+        .category-badge.sda { border-left: 3px solid #10b981; }
+        .pdf-header {
+            background: linear-gradient(135deg, #1a3b5d 0%, #0f2440 100%);
         }
-
-        /* Background Imersivo com Crossfade */
-        .video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -4;
-            background: #000;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.4) contrast(1.2);
-            transition: opacity 2s ease-in-out; /* O segredo da suavidade */
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.9) 100%);
-            z-index: -3;
-        }
-
-        /* Camadas de Partículas */
-        #particles-small, #particles-bokeh {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        #particles-small { z-index: -2; }
-        #particles-bokeh {
-            z-index: -1;
-            filter: blur(5px) contrast(1.2);
-        }
-
-        /* Estrutura Principal */
-        .main-screen {
-            display: flex;
-            height: 100%;
-            width: 100%;
-            padding: 0 10%;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 1s ease-in-out;
-            position: relative;
-            z-index: 10;
-        }
-
-        .title-section {
-            flex: 1.2;
-            animation: fadeInBlur 2.5s ease-out;
-        }
-
-        .game-title {
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            line-height: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(135, 207, 235, 0.6);
-            margin-bottom: 15px;
-        }
-
-        .game-subtitle {
-            font-size: 1.1rem;
-            letter-spacing: 10px;
-            color: #87ceeb;
-            text-transform: uppercase;
-            font-weight: 300;
-            opacity: 0.8;
-        }
-
-        .menu-section {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            align-items: flex-end;
-            animation: fadeInRight 1.5s ease-out 0.5s both;
-        }
-
-        .menu-link {
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: clamp(1.2rem, 2vw, 1.8rem);
-            font-weight: 500;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
-            position: relative;
-            padding-right: 25px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .menu-link::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            width: 0;
-            height: 1px;
-            background: #87ceeb;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px #87ceeb;
-        }
-
-        .menu-link:hover {
-            color: #fff;
-            padding-right: 45px;
-            text-shadow: 0 0 15px rgba(135, 207, 235, 0.8);
-            transform: scale(1.05);
-        }
-
-        .menu-link:hover::after { width: 35px; }
-
-        #credits-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        .credits-content { text-align: center; animation: scrollCredits 15s linear forwards; }
-        .credits-content h3 { font-family: 'Cinzel Decorative', cursive; color: #87ceeb; font-size: 2rem; margin-bottom: 40px; letter-spacing: 5px; }
-        .credits-item { margin-bottom: 30px; }
-        .role { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 5px; color: rgba(255, 255, 255, 0.5); margin-bottom: 5px; }
-        .name { font-size: 2rem; letter-spacing: 3px; font-weight: 500; }
-
-        @keyframes fadeInBlur { from { opacity: 0; filter: blur(15px); } to { opacity: 1; filter: blur(0); } }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes scrollCredits { from { transform: translateY(80%); } to { transform: translateY(-80%); } }
-
-        .btn-back {
-            position: absolute;
-            bottom: 50px;
-            background: none;
-            border: 1px solid rgba(135, 207, 235, 0.4);
-            color: #87ceeb;
-            padding: 10px 30px;
-            border-radius: 30px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-        .btn-back:hover { background: #87ceeb; color: #000; }
-  
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    background: #000;
-    overflow: hidden;
-    font-family: 'Quicksand', sans-serif;
-    color: #fff;
-    height: 100vh;
-    width: 100vw;
-}
-
-.video-container {
-    position: fixed;
-    inset: 0;
-    z-index: -4;
-    background: #000;
-}
-
-.video-container video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.4) contrast(1.2);
-    transition: opacity 2s ease-in-out;
-    pointer-events: none; /* impede ícone */
-}
-
-.overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.9) 100%);
-    z-index: -3;
-}
-
-/* (resto do seu CSS permanece igual) */
-</style>
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .electrolux-primary { color: #1a3b5d; }
+        .electrolux-bg { background-color: #1a3b5d; }
+        .electrolux-border { border-color: #1a3b5d; }
+        .electrolux-light { background-color: #e6edf5; }
+        .mda-badge { background-color: #1a3b5d; color: white; }
+        .sda-badge { background-color: #10b981; color: white; }
+    </style>
 </head>
+<body class="bg-gray-100 pb-24">
 
-<body>
+    <header class="electrolux-bg text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-bolt text-blue-300"></i>
+            <h1 class="text-lg font-bold tracking-wide">Floorshare Linha Branca</h1>
+        </div>
+        <button id="reset-top" class="text-xs bg-blue-900 hover:bg-blue-800 px-3 py-1 rounded-full transition">
+            <i class="fas fa-eraser mr-1"></i> Limpar
+        </button>
+    </header>
 
-<div id="particles-small"></div>
-<div id="particles-bokeh"></div>
+    <div class="container mx-auto p-4 max-w-md">
+        
+        <div class="bg-blue-50 border-l-4 electrolux-border p-3 rounded-r mb-4 shadow-sm">
+            <p class="text-blue-900 text-xs font-bold uppercase tracking-wider mb-1">Floorshare Linha Branca</p>
+            <h2 class="text-gray-800 font-bold text-sm">Controle de Participação por Marca</h2>
+        </div>
 
-<div class="video-container">
-    <video id="v1" autoplay muted playsinline preload="auto" disablepictureinpicture webkit-playsinline>
-        <source src="Iniciar.mp4" type="video/mp4">
-    </video>
+        <div class="space-y-4">
+            
+            <div class="bg-white p-4 rounded-2xl shadow-sm">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 flex items-center">
+                    <i class="fas fa-store mr-2"></i> Rede
+                </h3>
+                <div class="space-y-3">
+                    <input type="text" id="rede" placeholder="Rede" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="id-rede" placeholder="ID" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                        <input type="text" id="filial" placeholder="Filial" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    </div>
+                    <input type="text" id="cidade" placeholder="Cidade" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                </div>
+            </div>
 
-    <video id="v2" muted playsinline preload="auto" disablepictureinpicture webkit-playsinline style="opacity:0">
-        <source src="Iniciar.mp4" type="video/mp4">
-    </video>
+            <div class="bg-white p-4 rounded-2xl shadow-sm">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 flex items-center">
+                    <i class="fas fa-users mr-2"></i> Equipe
+                </h3>
+                <div class="space-y-3">
+                    <input type="text" id="coordenador" placeholder="Coordenador" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    <input type="text" id="consultor" placeholder="Consultor(a)" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    <input type="text" id="regional" placeholder="Regional" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-gray-400 text-xs">Data</span>
+                        <input type="date" id="data" class="w-full bg-gray-50 pt-6 pb-2 px-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition">
+                    </div>
+                </div>
+            </div>
 
-    <div class="overlay"></div>
-</div>
+            <!-- SEÇÃO DE CONFIGURAÇÃO DE CATEGORIAS -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 flex items-center">
+                    <i class="fas fa-cog mr-2"></i> Configurar Categorias
+                </h3>
+                
+                <!-- MDA - Categorias editáveis -->
+                <div class="mb-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="mda-badge text-xs font-bold px-2 py-1 rounded">MDA</span>
+                        <span class="text-xs text-gray-500">(até 5 categorias)</span>
+                    </div>
+                    <div id="mda-categories" class="space-y-2">
+                        <!-- Categorias MDA pré-definidas -->
+                    </div>
+                    <button type="button" id="add-mda-category" class="w-full mt-2 py-2 border border-dashed border-gray-300 text-gray-500 rounded-lg hover:bg-gray-50 hover:border-blue-400 hover:text-blue-500 transition text-xs flex items-center justify-center gap-1">
+                        <i class="fas fa-plus text-xs"></i> Adicionar categoria MDA
+                    </button>
+                </div>
+                
+                <!-- SDA - Categorias editáveis -->
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="sda-badge text-xs font-bold px-2 py-1 rounded">SDA</span>
+                        <span class="text-xs text-gray-500">(até 5 categorias)</span>
+                    </div>
+                    <div id="sda-categories" class="space-y-2">
+                        <!-- Categorias SDA pré-definidas -->
+                    </div>
+                    <button type="button" id="add-sda-category" class="w-full mt-2 py-2 border border-dashed border-gray-300 text-gray-500 rounded-lg hover:bg-gray-50 hover:border-blue-400 hover:text-blue-500 transition text-xs flex items-center justify-center gap-1">
+                        <i class="fas fa-plus text-xs"></i> Adicionar categoria SDA
+                    </button>
+                </div>
+                
+                <button type="button" id="apply-categories" class="w-full mt-4 bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition text-sm">
+                    <i class="fas fa-sync-alt mr-2"></i> Atualizar Categorias
+                </button>
+            </div>
 
-<main class="main-screen" id="main-menu">
-    <section class="title-section">
-        <h1 class="game-title">The Boy Who<br>Dreamt The World</h1>
-        <p class="game-subtitle">O menino que sonhou o mundo</p>
-    </section>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border-2 electrolux-border">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="electrolux-primary font-bold text-lg">Contagem por Categoria</h3>
+                    <div class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                        Electrolux primeiro
+                    </div>
+                </div>
+                
+                <div class="space-y-4" id="brands-container">
+                    <!-- Electrolux fixo no topo -->
+                    <div class="brand-category electrolux-light border electrolux-border rounded-xl p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="relative w-full">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-crown electrolux-primary"></i>
+                                </div>
+                                <input type="text" value="Electrolux" readonly class="w-full pl-9 pr-3 py-3 bg-transparent rounded-xl border-none text-gray-700 font-bold electrolux-primary">
+                            </div>
+                        </div>
+                        
+                        <div id="electrolux-categories" class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
+                            <!-- Categorias serão geradas dinamicamente -->
+                        </div>
+                        <div class="text-xs text-gray-400 text-center mt-1">
+                            <i class="fas fa-info-circle mr-1"></i>Marca principal
+                        </div>
+                    </div>
+                    
+                    <!-- Outras marcas serão adicionadas aqui -->
+                </div>
+                
+                <button type="button" id="add-brand" class="w-full mt-4 py-3 border-2 border-dashed border-gray-300 text-gray-500 rounded-xl hover:bg-gray-50 hover:border-blue-400 hover:text-blue-500 transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-plus"></i> Adicionar Marca Concorrente
+                </button>
+            </div>
+            
+            <div class="bg-white p-4 rounded-2xl shadow-sm">
+                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-3 flex items-center">
+                    <i class="fas fa-info-circle mr-2"></i> Observações
+                </h3>
+                <textarea id="observacoes" placeholder="Observações adicionais..." rows="2" class="w-full bg-gray-50 p-3 rounded-xl border-none focus:ring-2 focus:ring-blue-500 text-gray-700 text-sm transition resize-none"></textarea>
+            </div>
+        </div>
+        
+        <div class="h-8"></div>
+    </div>
 
-    <section class="menu-section">
-        <button class="menu-link" onclick="handleNavigation('play')">Iniciar Jogo</button>
-        <button class="menu-link" onclick="handleNavigation('continue')">Continuar</button>
-        <button class="menu-link" onclick="showCredits()">Créditos</button>
-    </section>
-</main>
+    <div id="result-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden flex items-end sm:items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md sm:rounded-2xl rounded-t-2xl shadow-2xl transform transition-transform duration-300 max-h-[90vh] flex flex-col">
+            
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-2xl">
+                <h3 class="font-bold text-gray-800">Relatório Gerado</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700 bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
 
-<div id="credits-screen">
-    <div class="credits-content">
-        <h3>Uma Produção Independente</h3>
-        <div class="credits-item">
-            <p class="role">Criação, Código e Design</p>
-            <p class="name">Reinaldo Leal</p>
+            <div class="p-4 overflow-y-auto no-scrollbar">
+                <div class="mb-4">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Resumo por Marca</h4>
+                    <div id="visual-summary" class="bg-gray-50 rounded-xl p-3 text-sm space-y-3"></div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Relatório Completo</h4>
+                    <div id="pdf-preview" class="whitespace-pre-wrap text-xs bg-gray-50 text-gray-900 p-4 rounded-xl border border-gray-200 font-mono max-h-60 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t bg-white flex gap-3">
+                <button id="generate-pdf" class="flex-1 electrolux-bg text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-blue-900 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-file-pdf"></i> Gerar PDF
+                </button>
+                <a id="whatsapp-link" href="#" target="_blank" class="flex-1 bg-green-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:bg-green-600 transition flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp text-xl"></i> WhatsApp
+                </a>
+            </div>
         </div>
     </div>
-    <button class="btn-back" onclick="hideCredits()">Voltar</button>
-</div>
 
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40">
+        <div class="max-w-md mx-auto">
+            <button id="generate-report" class="w-full electrolux-bg text-white font-bold py-3 rounded-xl shadow-lg hover:bg-blue-900 active:scale-95 transition flex items-center justify-center gap-2">
+                <i class="fas fa-chart-bar mr-2"></i> Gerar Relatório
+            </button>
+        </div>
+    </div>
 
-<script>
-/* --- SEU LOOP COM CROSSFADE (PRESERVADO + PROTEGIDO) --- */
-const v1 = document.getElementById('v1');
-const v2 = document.getElementById('v2');
+    <script>
+        const { jsPDF } = window.jspdf;
+        document.getElementById('data').valueAsDate = new Date();
 
-function setupLoop(current, next) {
-    current.ontimeupdate = () => {
-        if (
-            current.readyState >= 3 &&
-            current.duration &&
-            current.duration - current.currentTime < 2
-        ) {
-            next.currentTime = 0;
-            next.play().catch(()=>{});
-            next.style.opacity = '1';
-            current.style.opacity = '0';
-            current.ontimeupdate = null;
-            setupLoop(next, current);
+        // Estado das categorias (editável)
+        let categoriasMDA = [
+            { nome: 'Refrigerador', key: 'refrigerador' },
+            { nome: 'Fogão', key: 'fogao' },
+            { nome: 'Lavadora', key: 'lavadora' },
+            { nome: 'Microondas', key: 'microondas' }
+        ];
+        
+        let categoriasSDA = [
+            { nome: 'Airfryer', key: 'airfryer' },
+            { nome: 'Aspirador', key: 'aspirador' }
+        ];
+
+        // Função para normalizar chave (remover acentos, espaços, etc)
+        function normalizarChave(nome) {
+            return nome.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '')
+                .substring(0, 20);
         }
-    };
-}
 
-v1.play().catch(()=>{});
-setupLoop(v1, v2);
+        // Renderizar categorias na seção de configuração
+        function renderizarConfigCategorias() {
+            const mdaContainer = document.getElementById('mda-categories');
+            const sdaContainer = document.getElementById('sda-categories');
+            
+            mdaContainer.innerHTML = categoriasMDA.map((cat, index) => `
+                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
+                    <input type="text" value="${cat.nome}" 
+                           class="mda-category-name flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           data-index="${index}" data-tipo="mda">
+                    <button type="button" class="remove-category text-red-400 hover:text-red-600 p-1" data-index="${index}" data-tipo="mda">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            sdaContainer.innerHTML = categoriasSDA.map((cat, index) => `
+                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
+                    <input type="text" value="${cat.nome}" 
+                           class="sda-category-name flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                           data-index="${index}" data-tipo="sda">
+                    <button type="button" class="remove-category text-red-400 hover:text-red-600 p-1" data-index="${index}" data-tipo="sda">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
 
-/* --- DESBLOQUEIO MOBILE (OBRIGATÓRIO) --- */
-function unlockVideos() {
-    v1.play().catch(()=>{});
-    v2.play().catch(()=>{});
-}
+        // Adicionar categoria MDA
+        document.getElementById('add-mda-category').addEventListener('click', () => {
+            if (categoriasMDA.length >= 5) {
+                alert('Máximo de 5 categorias MDA atingido.');
+                return;
+            }
+            categoriasMDA.push({ nome: 'Nova MDA', key: '' });
+            renderizarConfigCategorias();
+        });
 
-document.addEventListener('touchstart', unlockVideos, { once:true });
-document.addEventListener('click', unlockVideos, { once:true });
+        // Adicionar categoria SDA
+        document.getElementById('add-sda-category').addEventListener('click', () => {
+            if (categoriasSDA.length >= 5) {
+                alert('Máximo de 5 categorias SDA atingido.');
+                return;
+            }
+            categoriasSDA.push({ nome: 'Nova SDA', key: '' });
+            renderizarConfigCategorias();
+        });
 
-/* --- SUAS FUNÇÕES ORIGINAIS --- */
-function handleNavigation(dest) {
-    const menu = document.getElementById('main-menu');
-    menu.style.opacity = '0';
-    setTimeout(() => {
-        window.location.href = dest === 'play'
-            ? './intro.html'
-            : './intro.html?continue=true';
-    }, 1000);
-}
+        // Remover categoria
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-category')) {
+                const btn = e.target.closest('.remove-category');
+                const index = parseInt(btn.dataset.index);
+                const tipo = btn.dataset.tipo;
+                
+                if (tipo === 'mda') {
+                    if (categoriasMDA.length <= 1) {
+                        alert('É necessário pelo menos 1 categoria MDA.');
+                        return;
+                    }
+                    categoriasMDA.splice(index, 1);
+                } else {
+                    if (categoriasSDA.length <= 1) {
+                        alert('É necessário pelo menos 1 categoria SDA.');
+                        return;
+                    }
+                    categoriasSDA.splice(index, 1);
+                }
+                renderizarConfigCategorias();
+            }
+        });
 
-function showCredits() {
-    document.getElementById('main-menu').style.display = 'none';
-    const credits = document.getElementById('credits-screen');
-    credits.style.display = 'flex';
-    setTimeout(()=>credits.style.opacity='1',50);
-}
+        // Atualizar nomes das categorias ao digitar
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('mda-category-name')) {
+                const index = parseInt(e.target.dataset.index);
+                categoriasMDA[index].nome = e.target.value;
+            } else if (e.target.classList.contains('sda-category-name')) {
+                const index = parseInt(e.target.dataset.index);
+                categoriasSDA[index].nome = e.target.value;
+            }
+        });
 
-function hideCredits() {
-    const credits = document.getElementById('credits-screen');
-    credits.style.opacity = '0';
-    setTimeout(()=>{
-        credits.style.display='none';
-        document.getElementById('main-menu').style.display='flex';
-    },1000);
-}
-</script>
+        // Aplicar categorias e recriar os campos
+        document.getElementById('apply-categories').addEventListener('click', () => {
+            // Atualizar chaves
+            categoriasMDA.forEach(cat => {
+                cat.key = normalizarChave(cat.nome) || `mda_${Date.now()}`;
+            });
+            categoriasSDA.forEach(cat => {
+                cat.key = normalizarChave(cat.nome) || `sda_${Date.now()}`;
+            });
+            
+            // Recriar campos da Electrolux
+            renderizarCategoriasElectrolux();
+            
+            // Recriar campos das marcas concorrentes
+            document.querySelectorAll('.competitor-categories-container').forEach(container => {
+                renderizarCategoriasConcorrente(container);
+            });
+            
+            alert('Categorias atualizadas com sucesso!');
+        });
 
+        // Renderizar categorias na Electrolux
+        function renderizarCategoriasElectrolux() {
+            const container = document.getElementById('electrolux-categories');
+            let html = '';
+            
+            categoriasMDA.forEach(cat => {
+                html += `
+                    <div class="category-badge mda rounded-lg p-3 text-center">
+                        <label class="text-xs text-gray-500 font-medium mb-1 block">${cat.nome}</label>
+                        <input type="number" data-marca="Electrolux" data-categoria="${cat.key}" data-tipo="mda" placeholder="0" 
+                               class="w-full text-center bg-transparent border-none text-lg font-bold text-gray-700 focus:outline-none" 
+                               inputmode="numeric" min="0">
+                    </div>
+                `;
+            });
+            
+            categoriasSDA.forEach(cat => {
+                html += `
+                    <div class="category-badge sda rounded-lg p-3 text-center">
+                        <label class="text-xs text-gray-500 font-medium mb-1 block">${cat.nome}</label>
+                        <input type="number" data-marca="Electrolux" data-categoria="${cat.key}" data-tipo="sda" placeholder="0" 
+                               class="w-full text-center bg-transparent border-none text-lg font-bold text-gray-700 focus:outline-none" 
+                               inputmode="numeric" min="0">
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Renderizar categorias para marcas concorrentes
+        function renderizarCategoriasConcorrente(container) {
+            let html = '';
+            
+            categoriasMDA.forEach(cat => {
+                html += `
+                    <div class="category-badge mda rounded-lg p-3 text-center">
+                        <label class="text-xs text-gray-500 font-medium mb-1 block">${cat.nome}</label>
+                        <input type="number" data-categoria="${cat.key}" data-tipo="mda" placeholder="0" 
+                               class="quantity-input w-full text-center bg-transparent border-none text-lg font-bold text-gray-700 focus:outline-none" 
+                               inputmode="numeric" min="0">
+                    </div>
+                `;
+            });
+            
+            categoriasSDA.forEach(cat => {
+                html += `
+                    <div class="category-badge sda rounded-lg p-3 text-center">
+                        <label class="text-xs text-gray-500 font-medium mb-1 block">${cat.nome}</label>
+                        <input type="number" data-categoria="${cat.key}" data-tipo="sda" placeholder="0" 
+                               class="quantity-input w-full text-center bg-transparent border-none text-lg font-bold text-gray-700 focus:outline-none" 
+                               inputmode="numeric" min="0">
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Template para marcas concorrentes
+        const competitorTemplate = () => {
+            const currentInputs = document.querySelectorAll('.brand-name');
+            const nextIndex = currentInputs.length;
+            
+            return `
+                <div class="brand-category bg-white border border-gray-200 rounded-xl p-4 relative shadow-sm">
+                    <button type="button" class="remove-brand absolute top-2 right-2 text-gray-400 hover:text-red-600 p-1 z-10">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="flex items-center mb-3">
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-tag text-gray-400"></i>
+                            </div>
+                            <input type="text" class="brand-name w-full pl-9 pr-3 py-3 bg-gray-50 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-gray-700" 
+                                   placeholder="Digite o nome da marca" value="Marca ${nextIndex}">
+                        </div>
+                    </div>
+                    
+                    <div class="competitor-categories-container grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <!-- Categorias renderizadas dinamicamente -->
+                    </div>
+                </div>
+            `;
+        };
+
+        // Adicionar marca concorrente
+        document.getElementById('add-brand').addEventListener('click', function() {
+            const container = document.getElementById('brands-container');
+            const newBrand = document.createElement('div');
+            newBrand.className = 'animate-fade-in mb-4';
+            newBrand.innerHTML = competitorTemplate();
+            container.appendChild(newBrand);
+            
+            // Renderizar categorias no novo elemento
+            const catContainer = newBrand.querySelector('.competitor-categories-container');
+            renderizarCategoriasConcorrente(catContainer);
+            
+            const newInput = newBrand.querySelector('.brand-name');
+            if(newInput) newInput.select();
+        });
+
+        // Remover marca
+        document.getElementById('brands-container').addEventListener('click', function(e) {
+            const btnRemove = e.target.closest('.remove-brand');
+            if (btnRemove) {
+                const brandWrapper = btnRemove.closest('.animate-fade-in');
+                if (brandWrapper) {
+                    brandWrapper.remove();
+                } else {
+                    const brandDiv = btnRemove.closest('.brand-category');
+                    if (brandDiv) brandDiv.remove();
+                }
+            }
+        });
+
+        // Coleta de dados
+        function coletarDadosMarcas() {
+            const brandsData = {};
+            const allCategories = document.querySelectorAll('.brand-category');
+            
+            // Mapear todas as chaves de categoria possíveis
+            const todasCategorias = [...categoriasMDA, ...categoriasSDA];
+            
+            allCategories.forEach(div => {
+                let brandName = '';
+                
+                const fixedInput = div.querySelector('input[value="Electrolux"]');
+                const editableInput = div.querySelector('.brand-name');
+                
+                if (fixedInput) {
+                    brandName = 'Electrolux';
+                } else if (editableInput) {
+                    brandName = editableInput.value.trim();
+                    if (!brandName) return;
+                    if (brandsData[brandName]) {
+                        brandName = brandName + " (2)";
+                    }
+                }
+                
+                if (!brandName) return;
+
+                const data = { total: 0 };
+                
+                todasCategorias.forEach(cat => {
+                    const input = div.querySelector(`[data-categoria="${cat.key}"]`);
+                    const valor = parseInt(input?.value) || 0;
+                    data[cat.key] = valor;
+                    data.total += valor;
+                });
+                
+                brandsData[brandName] = data;
+            });
+            
+            // Remover marcas concorrentes sem dados
+            Object.keys(brandsData).forEach(marca => {
+                if (marca !== 'Electrolux' && brandsData[marca].total === 0) {
+                    delete brandsData[marca];
+                }
+            });
+            
+            return brandsData;
+        }
+
+        // Totais
+        function calcularTotais(brandsData) {
+            const todasCategorias = [...categoriasMDA, ...categoriasSDA];
+            const totais = { totalGeral: 0 };
+            
+            todasCategorias.forEach(cat => {
+                totais[cat.key] = 0;
+            });
+            
+            Object.values(brandsData).forEach(data => {
+                totais.totalGeral += data.total;
+                todasCategorias.forEach(cat => {
+                    totais[cat.key] += (data[cat.key] || 0);
+                });
+            });
+            
+            return totais;
+        }
+
+        function calcularPorcentagem(valor, total) {
+            return total > 0 ? Math.round((valor / total) * 100) : 0;
+        }
+
+        function formatarData(dataString) {
+            if (!dataString) return new Date().toLocaleDateString('pt-BR');
+            const [ano, mes, dia] = dataString.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Resumo Visual
+        function gerarResumoVisual(brandsData, totais) {
+            let html = '';
+            const todasCategorias = [...categoriasMDA, ...categoriasSDA];
+            
+            const marcasOrdenadas = Object.entries(brandsData)
+                .sort(([nomeA, dataA], [nomeB, dataB]) => {
+                    if (nomeA.toUpperCase() === 'ELECTROLUX') return -1;
+                    if (nomeB.toUpperCase() === 'ELECTROLUX') return 1;
+                    return dataB.total - dataA.total;
+                });
+            
+            marcasOrdenadas.forEach(([marca, data]) => {
+                const isElectrolux = marca.toUpperCase() === 'ELECTROLUX';
+                const pctTotal = calcularPorcentagem(data.total, totais.totalGeral);
+                
+                html += `
+                    <div class="${isElectrolux ? 'electrolux-light border-l-4 electrolux-border' : 'bg-white border border-gray-200'} p-3 rounded-lg mb-2 shadow-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold ${isElectrolux ? 'electrolux-primary' : 'text-gray-700'}">${marca}</span>
+                            <span class="font-bold electrolux-primary">${pctTotal}%</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 text-[10px] sm:text-xs">
+                            ${todasCategorias.map(cat => {
+                                const pct = calcularPorcentagem(data[cat.key] || 0, totais[cat.key]);
+                                return `
+                                    <div class="text-center">
+                                        <div class="text-gray-500">${cat.nome}</div>
+                                        <div class="font-semibold">${data[cat.key] || 0} 
+                                            <span class="text-blue-600">(${pct}%)</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Rodapé dos totais
+            html += `
+                <div class="mt-3 pt-3 border-t border-gray-300">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 text-center text-xs">
+                        <div>
+                            <div class="text-gray-500">Total Geral</div>
+                            <div class="font-bold text-sm text-gray-800">${totais.totalGeral}</div>
+                        </div>
+                        ${todasCategorias.map(cat => `
+                            <div>
+                                <div class="text-gray-500">${cat.nome}</div>
+                                <div class="font-bold text-sm text-blue-600">${totais[cat.key]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // Relatório Texto
+        function gerarRelatorioTexto(dados, brandsData, totais) {
+            let relatorio = `*FLOORSHARE LINHA BRANCA*\n\n`;
+            relatorio += `*Rede:* ${dados.rede}\n`;
+            if(dados.idRede) relatorio += `*ID:* ${dados.idRede}\n`;
+            relatorio += `*Filial:* ${dados.filial}\n`;
+            relatorio += `*Cidade:* ${dados.cidade}\n`;
+            relatorio += `*Consultor:* ${dados.consultor}\n`;
+            relatorio += `*Data:* ${dados.data}\n\n`;
+            
+            if (dados.observacoes) {
+                relatorio += `*Obs:* ${dados.observacoes}\n\n`;
+            }
+            
+            relatorio += `*PARTICIPAÇÃO*\n`;
+            relatorio += `------------------------------\n`;
+            
+            const todasCategorias = [...categoriasMDA, ...categoriasSDA];
+            
+            const marcasOrdenadas = Object.entries(brandsData)
+                .sort(([nomeA, dataA], [nomeB, dataB]) => {
+                    if (nomeA.toUpperCase() === 'ELECTROLUX') return -1;
+                    if (nomeB.toUpperCase() === 'ELECTROLUX') return 1;
+                    return dataB.total - dataA.total;
+                });
+            
+            marcasOrdenadas.forEach(([marca, data]) => {
+                const pctTotal = calcularPorcentagem(data.total, totais.totalGeral);
+                relatorio += `*${marca.toUpperCase()}*: ${pctTotal}% (${data.total} un)\n`;
+                todasCategorias.forEach(cat => {
+                    if (data[cat.key] > 0) {
+                        relatorio += `  ${cat.nome}: ${data[cat.key]}\n`;
+                    }
+                });
+                relatorio += `\n`;
+            });
+            
+            relatorio += `------------------------------\n`;
+            relatorio += `*TOTAL GERAL: ${totais.totalGeral}*\n`;
+            
+            return relatorio;
+        }
+
+        // Geração PDF
+        async function gerarPDF(dados, brandsData, totais) {
+            const todasCategorias = [...categoriasMDA, ...categoriasSDA];
+            const numColunas = todasCategorias.length + 2; // Marca + categorias + Total + %
+            const isLandscape = numColunas > 6;
+            
+            const pdf = new jsPDF(isLandscape ? 'landscape' : 'portrait', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.width;
+            
+            // Cabeçalho
+            pdf.setFillColor(26, 59, 93);
+            pdf.rect(0, 0, pageWidth, 30, 'F');
+            
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(22);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('FLOORSHARE', pageWidth / 2, 14, { align: 'center' });
+            
+            pdf.setFontSize(12);
+            pdf.text('RELATÓRIO DE PARTICIPAÇÃO', pageWidth / 2, 22, { align: 'center' });
+            
+            let y = 45;
+            
+            // Dados Gerais
+            pdf.setTextColor(0, 0, 0);
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('DADOS DA LOJA E EQUIPE', 15, y);
+            
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(15, y+2, pageWidth-15, y+2);
+            y += 8;
+            
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(`Rede: ${dados.rede}`, 15, y);
+            pdf.text(`Filial: ${dados.filial}`, 15, y + 6);
+            pdf.text(`Cidade: ${dados.cidade}`, 15, y + 12);
+            pdf.text(`Data: ${dados.data}`, pageWidth/2 + 10, y);
+            pdf.text(`Consultor: ${dados.consultor}`, pageWidth/2 + 10, y + 6);
+            pdf.text(`Coordenador: ${dados.coordenador}`, pageWidth/2 + 10, y + 12);
+            
+            y += 25;
+            
+            if (dados.observacoes) {
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('OBSERVAÇÕES', 15, y);
+                y += 6;
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                const obs = pdf.splitTextToSize(dados.observacoes, pageWidth - 30);
+                pdf.text(obs, 15, y);
+                y += (obs.length * 5) + 10;
+            }
+
+            // Tabela
+            pdf.setFontSize(11);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('ANÁLISE DE SHARE', 15, y);
+            y += 5;
+
+            // Cabeçalho Tabela
+            pdf.setFillColor(240, 240, 240);
+            pdf.rect(15, y, pageWidth - 30, 8, 'F');
+            pdf.setFontSize(7);
+            
+            // Calcular largura das colunas
+            const tableWidth = pageWidth - 30;
+            const colWidthMarca = 30;
+            const remainingWidth = tableWidth - colWidthMarca;
+            const colWidthCategoria = remainingWidth / (todasCategorias.length + 2); // +2 para Total e %
+            
+            let currentX = 15;
+            const colPositions = {};
+            
+            // Coluna Marca
+            pdf.text('MARCA', currentX + 2, y + 5);
+            colPositions['marca'] = currentX;
+            currentX += colWidthMarca;
+            
+            // Colunas Categorias
+            todasCategorias.forEach(cat => {
+                pdf.text(cat.nome.toUpperCase(), currentX + 2, y + 5);
+                colPositions[cat.key] = currentX;
+                currentX += colWidthCategoria;
+            });
+            
+            // Coluna Total
+            pdf.text('TOTAL', currentX + 2, y + 5);
+            colPositions['total'] = currentX;
+            currentX += colWidthCategoria;
+            
+            // Coluna %
+            pdf.text('SHARE %', currentX + 2, y + 5);
+            colPositions['pct'] = currentX;
+            
+            y += 10;
+
+            const marcasOrdenadas = Object.entries(brandsData)
+                .sort(([nomeA, dataA], [nomeB, dataB]) => {
+                    if (nomeA.toUpperCase() === 'ELECTROLUX') return -1;
+                    if (nomeB.toUpperCase() === 'ELECTROLUX') return 1;
+                    return dataB.total - dataA.total;
+                });
+
+            marcasOrdenadas.forEach(([marca, data]) => {
+                const isElectrolux = marca.toUpperCase() === 'ELECTROLUX';
+                
+                if (isElectrolux) {
+                    pdf.setFillColor(230, 237, 245);
+                    pdf.rect(15, y - 1, tableWidth, 7, 'F');
+                    pdf.setFont('helvetica', 'bold');
+                } else {
+                    pdf.setFont('helvetica', 'normal');
+                }
+
+                pdf.text(marca.substring(0, 18), colPositions['marca'] + 2, y + 4);
+                
+                todasCategorias.forEach(cat => {
+                    pdf.text((data[cat.key] || 0).toString(), colPositions[cat.key] + 2, y + 4);
+                });
+                
+                pdf.text(data.total.toString(), colPositions['total'] + 2, y + 4);
+                
+                const pct = calcularPorcentagem(data.total, totais.totalGeral);
+                pdf.text(`${pct}%`, colPositions['pct'] + 2, y + 4);
+                
+                y += 8;
+            });
+
+            // Linha total
+            y += 2;
+            pdf.setLineWidth(0.5);
+            pdf.line(15, y, pageWidth-15, y);
+            y += 6;
+            
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('TOTAIS GERAIS', colPositions['marca'] + 2, y);
+            
+            todasCategorias.forEach(cat => {
+                pdf.text((totais[cat.key] || 0).toString(), colPositions[cat.key] + 2, y);
+            });
+            
+            pdf.text(totais.totalGeral.toString(), colPositions['total'] + 2, y);
+
+            // Rodapé
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(150, 150, 150);
+            const bottomY = isLandscape ? 200 : 285;
+            pdf.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, pageWidth/2, bottomY, { align: 'center' });
+
+            pdf.save(`Floorshare_${dados.rede}.pdf`);
+        }
+
+        // Evento principal
+        document.getElementById('generate-report').addEventListener('click', function() {
+            const brandsData = coletarDadosMarcas();
+            const totais = calcularTotais(brandsData);
+
+            if (totais.totalGeral === 0) {
+                alert("Adicione quantidades em pelo menos uma marca.");
+                return;
+            }
+
+            const dados = {
+                rede: document.getElementById('rede').value || "-",
+                idRede: document.getElementById('id-rede').value || "-",
+                filial: document.getElementById('filial').value || "-",
+                cidade: document.getElementById('cidade').value || "-",
+                coordenador: document.getElementById('coordenador').value || "-",
+                consultor: document.getElementById('consultor').value || "-",
+                regional: document.getElementById('regional').value || "-",
+                data: formatarData(document.getElementById('data').value),
+                observacoes: document.getElementById('observacoes').value
+            };
+
+            document.getElementById('visual-summary').innerHTML = gerarResumoVisual(brandsData, totais);
+
+            const relatorioTexto = gerarRelatorioTexto(dados, brandsData, totais);
+            document.getElementById('pdf-preview').textContent = relatorioTexto;
+            document.getElementById('whatsapp-link').href = `https://wa.me/?text=${encodeURIComponent(relatorioTexto)}`;
+            
+            document.getElementById('generate-pdf').onclick = () => {
+                gerarPDF(dados, brandsData, totais);
+            };
+
+            document.getElementById('result-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('result-modal').classList.add('hidden');
+        });
+
+        document.getElementById('reset-top').addEventListener('click', () => {
+            if(confirm('Deseja limpar todos os dados?')) {
+                document.location.reload();
+            }
+        });
+
+        // Inicialização
+        renderizarConfigCategorias();
+        renderizarCategoriasElectrolux();
+        document.getElementById('rede').focus();
+    </script>
 </body>
 </html>
